@@ -1,3 +1,8 @@
+# Author: Om Amin
+# 
+# generates c header files containing function prototypes of all .c files in given folder
+ 
+
 import os 
 import re #import regex
 import sys
