@@ -16,9 +16,10 @@ def getFolderPaths():
     cFolder = os.getcwd()
     hFolder = os.getcwd()
 
-    # if .c folder argument given, set it
+    # if 1 argument given, then set bot .h and .c folder to it
     if (len(sys.argv) == 2):
         cFolder = sys.argv[1]
+        hFolder = sys.argv[1]
     
     # if both .c and .h argument given, set it
     if (len(sys.argv) > 2):
