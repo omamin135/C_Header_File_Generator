@@ -26,6 +26,9 @@ def getFolderPaths():
         cFolder = sys.argv[1]
         hFolder = sys.argv[2]
     
+    print("path to .c folder set: ", cFolder)
+    print("path to .h folder set: ", hFolder)
+    
     return (cFolder, hFolder)
 
 # given a list of lines, returns list of lines of function protypes
@@ -57,8 +60,12 @@ def exclude(line):
 #creates header file and print all function protypes to it
 def constructFile(protos, fileName):
     #set path to header file
-    path = HEADER_FILES + fileName[:-2:] + ".h"
+    fileName = fileName[:-2:] + ".h"
+
+    path = HEADER_FILES + fileName
     file = open(path, "w")
+
+    print(f"generating {fileName} header file")
 
     #write all the function prototypes
     for p in protos:
