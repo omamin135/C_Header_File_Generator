@@ -15,21 +15,30 @@ def getFolderPaths():
     #By default get .c files and export .h files into directory of main.py file
     cFolder = os.getcwd()
     hFolder = os.getcwd()
+    readnWrite = False
 
-    # if 1 argument given, then set bot .h and .c folder to it
+    # if 1 argument given, then set both .h and .c folder to it
     if (len(sys.argv) == 2):
         cFolder = sys.argv[1]
         hFolder = sys.argv[1]
     
-    # if both .c and .h argument given, set it
-    if (len(sys.argv) > 2):
-        cFolder = sys.argv[1]
-        hFolder = sys.argv[2]
+    if (len(sys.argv) == 3):
+
+        #if -rw flag given then generate header files in same directory as .c corresponding file
+        if (sys.argv[1] == "-rw"):
+            readnWrite = True
+            cFolder = sys.argv[2]
+            hFolder = sys.argv[2]
+        else:
+            #without -rw flag generate in specifed folder
+            cFolder = sys.argv[1]
+            hFolder = sys.argv[2]
     
+
     print("path to .c folder set: ", cFolder)
     print("path to .h folder set: ", hFolder)
     
-    return (cFolder, hFolder)
+    return (cFolder, hFolder, readnWrite)
 
 # given a list of lines, returns list of lines of function protypes
 def parseFile(lines):
@@ -58,14 +67,11 @@ def exclude(line):
     return (keyword in exclude)
 
 #creates header file and print all function protypes to it
-def constructFile(protos, fileName):
-    #set path to header file
-    fileName = fileName[:-2:] + ".h"
-
-    path = HEADER_FILES + fileName
+def constructFile(protos, path):
+  
     file = open(path, "w")
 
-    print(f"generating {fileName} header file")
+    print(f"generating {path}")
 
     #write all the function prototypes
     for p in protos:
@@ -86,19 +92,28 @@ def prepProto(proto):
         
     return proto
 
+
 #get the paths to the .c and .h files
-C_FILES, HEADER_FILES = getFolderPaths()
+cFolder, hFolder, readWrite = getFolderPaths()
 
 #os.walk to iterate through all subfolder aswell
-for root, dirs, files in os.walk(C_FILES):
+for root, dirs, files in os.walk(cFolder):
     for filename in files:
         #for any file with .c extension
         if(filename[len(filename)-2:] == ".c"):
-            with open(os.path.join(root, filename)) as fp:
+
+            path = os.path.join(root, filename)
+            with open(path) as fp:
                 #grab all the lines and create header files
                 lines = fp.readlines()
                 protos  = parseFile(lines)
-                constructFile(protos, filename)
+
+                if (readWrite):
+                    path = path[:-2:] + ".h"
+                else:
+                    path = hFolder + filename[:-2:] + ".h"
+
+                constructFile(protos, path)
 
             
         
